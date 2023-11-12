@@ -1,0 +1,66 @@
+name: 'Build container: fcos-base'
+
+env:
+  IMAGE_NAME: fcos-base
+
+on:
+  schedule:
+    - cron:  '0 */12 * * *'
+  push:
+    branches:
+      - main
+    paths:
+      - Dockerfile
+      - .github/workflows/build-fcos-base.yml
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: FCOS Version
+        shell: bash
+        run: |
+          echo "FCOS_VERSION=$(curl -Ls https://builds.coreos.fedoraproject.org/streams/stable.json | jq -r '.architectures.x86_64.artifacts.metal.release' | sed -n 's~\([[:digit:]]\+\)\..*~\1~p')" >> $GITHUB_ENV
+
+      - name: Build container image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          containerfiles: Dockerfile
+          image: ${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          layers: true
+          oci: true
+          build-args: BUILDER_VERSION=${{ env.FCOS_VERSION }}
+
+      - name: Push To Registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          registry: ghcr.io
+          tags: latest
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build failed webhook
+        if: failure()
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-urL: ${{ secrets.DISCORD_WEBHOOK }}
+          content: '@everyone Fedora CoreOS build has **failed**'
+          embed-title: 'Finished workflow with errors'
+          embed-url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          embed-timestamp: ${{ github.event.repository.updated_at }}
+          embed-color: 16734296
+
+      - name: Build success webhook
+        if: success()
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-urL: ${{ secrets.DISCORD_WEBHOOK }}
+          content: '@everyone Fedora CoreOS build was **successfull**'
+          embed-title: 'Finished workflow without errors'
+          embed-url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          embed-timestamp: ${{ github.event.repository.updated_at }}
+          embed-color: 5832553
