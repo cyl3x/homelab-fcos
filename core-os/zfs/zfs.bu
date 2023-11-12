@@ -33,3 +33,6 @@ systemd:
 
     - name: zrepl.service
       enabled: true
+
+    - name: zfs-module.service
+      enabled: true

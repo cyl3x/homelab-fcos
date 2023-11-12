@@ -6,8 +6,9 @@ Before=zincati.service
 
 [Service]
 Type=oneshot
-ExecCondition=bash -c "rpm-ostree status --booted | grep -zv 'ghcr.io/cyl3x/fcos-base'"
-ExecStart=rpm-ostree rebase --reboot ostree-unverified-registry:ghcr.io/cyl3x/fcos-base
+RemainAfterExit=true
+ExecCondition=bash -c "rpm-ostree status --booted | grep -zv 'ghcr.io/cyl3x/fcos-server'"
+ExecStart=rpm-ostree rebase --reboot ostree-unverified-registry:ghcr.io/cyl3x/fcos-server
 
 [Install]
 WantedBy=multi-user.target

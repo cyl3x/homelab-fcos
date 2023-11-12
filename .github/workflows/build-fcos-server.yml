@@ -1,17 +1,21 @@
-name: 'Build container: fcos-base'
+name: 'Build container: fcos-server'
 
 env:
-  IMAGE_NAME: fcos-base
+  IMAGE_NAME: fcos-server
 
 on:
   schedule:
-    - cron:  '0 */12 * * *'
+    - cron:  '0 12,0 * * *'
   push:
     branches:
       - main
     paths:
-      - Dockerfile
+      - Dockerfile.server
       - .github/workflows/build-fcos-base.yml
+  workflow_run:
+    workflows: ['Build container: fcos-zfs']
+    types:
+      - completed
 
 jobs:
   build-image:
@@ -20,19 +24,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: FCOS Version
-        shell: bash
-        run: |
-          echo "FCOS_VERSION=$(curl -Ls https://builds.coreos.fedoraproject.org/streams/stable.json | jq -r '.architectures.x86_64.artifacts.metal.release' | sed -n 's~\([[:digit:]]\+\)\..*~\1~p')" >> $GITHUB_ENV
-
       - name: Build container image
         uses: redhat-actions/buildah-build@v2
         with:
-          containerfiles: Dockerfile
+          containerfiles: Dockerfile.server
           image: ${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           layers: false
           oci: true
-          build-args: BUILDER_VERSION=${{ env.FCOS_VERSION }}
 
       - name: Push To Registry
         uses: redhat-actions/push-to-registry@v2
@@ -48,7 +46,7 @@ jobs:
         uses: tsickert/discord-webhook@v5.3.0
         with:
           webhook-urL: ${{ secrets.DISCORD_WEBHOOK }}
-          content: '@everyone Fedora CoreOS build has **failed**'
+          content: '@everyone FCOS **Server** build has **failed**'
           embed-title: 'Finished workflow with errors'
           embed-url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           embed-timestamp: ${{ github.event.repository.updated_at }}
@@ -59,7 +57,7 @@ jobs:
         uses: tsickert/discord-webhook@v5.3.0
         with:
           webhook-urL: ${{ secrets.DISCORD_WEBHOOK }}
-          content: '@everyone Fedora CoreOS build was **successfull**'
+          content: '@everyone FCOS **Server** build was **successfull**'
           embed-title: 'Finished workflow without errors'
           embed-url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           embed-timestamp: ${{ github.event.repository.updated_at }}
