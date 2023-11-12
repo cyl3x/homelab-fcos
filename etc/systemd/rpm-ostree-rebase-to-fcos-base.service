@@ -1,0 +1,13 @@
+[Unit]
+Description=Rebase system to custom image on boot
+Wants=rpm-ostree-install.service network-online.target
+After=rpm-ostree-install.service network-online.target
+Before=zincati.service
+
+[Service]
+Type=oneshot
+ExecCondition=bash -c "rpm-ostree status --booted | grep -zv 'ghcr.io/cyl3x/fcos-base'"
+ExecStart=rpm-ostree rebase --reboot ostree-unverified-registry:ghcr.io/cyl3x/fcos-base
+
+[Install]
+WantedBy=multi-user.target

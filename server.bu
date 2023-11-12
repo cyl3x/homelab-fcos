@@ -1,0 +1,73 @@
+variant: fcos
+version: 1.5.0
+storage:
+  links:
+    - path: /usr/local/bin/control
+      target: /server/control
+
+    - path: /etc/localtime
+      target: /usr/share/zoneinfo/Europe/Berlin
+
+    - path: /etc/systemd/system/multi-user.target.wants/zfs-scrub-monthly@raid.service
+      target: /etc/systemd/system/zfs-scrub-monthly@.service
+
+    - path: /etc/systemd/system/multi-user.target.wants/zfs-scrub-monthly@raid.timer
+      target: /etc/systemd/system/zfs-scrub-monthly@.timer
+
+    - path: /etc/systemd/system/multi-user.target.wants/zrepl.service
+      target: /usr/lib/systemd/system/zrepl.service
+  files:
+    - path: /etc/hostname
+      mode: 0644
+      contents:
+        inline: server
+
+    - path: /etc/vconsole.conf
+      mode: 0644
+      contents:
+        inline: KEYMAP=de
+
+    - path: /etc/profile.d/zz-environment.sh
+      contents:
+        local: etc/profile.d/zz-environment.sh
+      mode: 0644
+systemd:
+  units:
+    - name: docker.service
+      enabled: true
+
+    - name: zfs-scrub@raid.service
+      enabled: true
+
+    - name: zfs-scrub@raid.timer
+      enabled: true
+
+    - name: zfs-mount.service
+      enabled: true
+
+    - name: zrepl.service
+      enabled: true
+
+    - name: rpm-ostree-install-basics.service
+      enabled: true
+      contents_local: etc/systemd/rpm-ostree-install-basics.service
+
+    - name: rpm-ostree-rebase-to-fcos-base.service
+      enabled: true
+      contents_local: etc/systemd/rpm-ostree-rebase-to-fcos-base.service
+
+kernel_arguments:
+  should_exist:
+    - amd_pstate=passive
+
+passwd:
+  users:
+    - name: core
+      password_hash: $y$j9T$rzl844KSCnYmas54mbGHq/$ALtFLZtbrSx8ouoJHaYcmNAL7KwgKcGwrgeTMz.cYY8
+      groups:
+        - docker
+        - wheel
+      shell: /bin/bash
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVBnPZ0h44IaemJ6m/e6FFHlWpAIlM4piw/wcf69OcbNP1mvSXCck3rGBZG2d5TBnwTYlJaCk2xuEQ2DJXZs/zaQPrg3m+F3VeK3Ut/6M3ScGMcGQmU7OZHNR0ubt6ntneg14oKZqRXhChzkm/bTm8VEqlxNqjmX3AvqhTdwHKgpItwxRdaQcOO44Kn+ZX2a8MlSK0Th/MOaQx/YHdIZdwV7dXD92rjvo3ETdhOu8bIea6t348PAZz3oB0HFYCw4QvNnXyRIrDKZATCGqiQ1dC2LzJeYIpoYPnqmeugy6uhxi+nnEoijFrpkQH41GavpCF213feT7oYlMKlV04lmELCBob/3UJt7YFFBJWokpYALVK+tgS63SHD6+YyxwXwp2ArC//iN9FKAV4gqWzgoklyyFkwhYh4EdfKzU4JElwJ70STabaMls2qRp2FxCBE3qdM0V1gz9AQ8IaTiej8svFpuTSxZxN2ybPEsz3y3mlgB2P6HmH6UH8ni948CJFb3s= michel@michel-arch
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDDfAEcbUefiHBIIt+Qie+VqvPrVyKtv+iJAszSVHM7pg9mfJ1avsd3G9EPgt2dCBXZAVQSf/Gl5xZBiXmRYJtyUFhx9xvgE9+SgMfT0YrBZ2yS7RNCtywWGPY2FQn0cMWEPA2sOAvjTUdEvpWa4KsH9kmwg9W7iy24exWLeSFvYZ/WJL2cIwj/O3icj/nZ5bZO7ItA/DfUPwqOo6MJugzo4zEemHHi4uml2q0p1zu+nuqxmVKYv7opiWQ12Ulgq9c/HYjRvB3MDZm7xzyC7orndCEUApBGtVNxm1AVaD3kj7BsvL155B+nTUAjsVar+WshCHkkagTZXkgyH9WZJ1lspr31r4l7vOZ326odKbSFG7qBgAekcEvXIGqsBLDf03TA6gGGcmMpRiCrAuTTb9fAJMHwSuyB+dSdzyDGlgaGr9y0njyPnKXr2FqwgGCF2H8sgj8/WiXECmsHCG3mzFgA/CHU6Cro8qQbynZfRLkqwP0OjodgjGfrO9Q3wsSx4CE= michel@shopware-michel

@@ -1,0 +1,16 @@
+[Unit]
+Description=Layer base packages with rpm-ostree
+Documentation=https://docs.fedoraproject.org/en-US/fedora-coreos/os-extensions/
+Wants=network-online.target
+After=network-online.target
+Before=rpm-ostree-rebase-to-fcos-base.service sshd-selinux-port.service
+ConditionPathExists=!/var/lib/%N.stamp
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=rpm-ostree install --apply-live --allow-inactive micro docker-compose btop policycoreutils-python-utils
+ExecStartPost=touch /var/lib/%N.stamp
+
+[Install]
+WantedBy=multi-user.target
