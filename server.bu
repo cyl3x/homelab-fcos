@@ -27,6 +27,12 @@ storage:
       contents:
         inline: KEYMAP=de
 
+    # zfs
+    - path: /etc/zrepl/zrepl.yml
+      contents:
+        local: etc/zrepl/zrepl.yml
+      mode: 0644
+
     # config
     - path: /etc/zincati/config.d/zz-config.toml
       contents:

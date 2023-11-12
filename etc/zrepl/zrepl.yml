@@ -1,0 +1,21 @@
+jobs:
+  - type: snap
+    name: server
+    filesystems: {
+        "raid": true,
+        "raid/server/volumes": true,
+        "raid/server/confs": true,
+        "raid/storage": true
+    }
+    snapshotting:
+      type: periodic
+      prefix: zrepl_
+      interval: 12h
+    pruning:
+      keep:
+        # make sure manually created snapshots by the administrator are kept
+        - type: regex
+          regex: "^manual_.*"
+        - type: grid
+          grid: 1x1h(keep=all) | 24x1h | 7x1d
+          regex: "^zrepl_.*"
