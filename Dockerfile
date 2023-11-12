@@ -25,10 +25,10 @@ RUN curl -L -o zfs.tar.gz "$(cat /tmp/zfs_url.txt)" \
     && mkdir /zfs \
     && tar xzf zfs.tar.gz --strip-components=1 --directory=/zfs
 WORKDIR /zfs
-RUN ./configure -with-linux=/usr/src/kernels/$(cat /kernel-version.txt)/ -with-linux-obj=/usr/src/kernels/$(cat /kernel-version.txt)/ \
-    && make -j1 rpm-utils rpm-kmod \
-    && rm -rf *devel*.rpm *debuginfo*.rpm *debugsource*.rpm \
-    && mv *.rpm /rpms
+RUN ./configure --with-linux=/usr/src/kernels/$(cat /kernel-version.txt) \
+    && make -j6 rpm-utils rpm-kmod \
+    && mv kmod-zfs-*.x86_64.rpm /rpms \
+    && ls /rpms
 ### zfs ###
 
 ### zrepl ###
@@ -47,6 +47,8 @@ RUN curl -L -o /tmp/starship.tar.gz "$(cat /tmp/starship_url.txt)" \
 ### starship ###
 
 COPY --from=builder /rpms/*.rpm /rpms/
+
+RUN ls /rpms/*.x86_64.rpm
 
 RUN rpm-ostree install /rpms/*.x86_64.rpm \
     && rm -rf /var/lib/pcp /rpms \
