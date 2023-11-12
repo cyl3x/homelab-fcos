@@ -48,6 +48,12 @@ storage:
       contents:
         local: etc/profile.d/zz-environment.sh
       mode: 0644
+
+    - path: /etc/ssh/sshd_config.d/zz-sshd.conf
+      contents:
+        local: etc/ssh/sshd_config.d/zz-sshd.conf
+      mode: 0600
+
 systemd:
   units:
     - name: docker.service
@@ -72,6 +78,11 @@ systemd:
     - name: rpm-ostree-rebase-to-fcos-base.service
       enabled: true
       contents_local: etc/systemd/rpm-ostree-rebase-to-fcos-base.service
+
+    # Because https://github.com/coreos/fedora-coreos-tracker/issues/396#issuecomment-598799168
+    - name: sshd-selinux-port.service
+      enabled: true
+      contents_local: etc/systemd/sshd-selinux-port.service
 
 kernel_arguments:
   should_exist:

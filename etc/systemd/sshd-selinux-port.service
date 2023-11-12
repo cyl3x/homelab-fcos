@@ -1,0 +1,12 @@
+[Unit]
+Description=Adds a selinux port rule for sshd
+Wants=rpm-ostree-install.service
+After=rpm-ostree-install.service
+
+[Service]
+Type=oneshot
+ExecStartPre=semanage port -D -t ssh_port_t -p tcp
+ExecStart=bash -ec "semanage port -a -t ssh_port_t -p tcp $(sshd -T | sed -n 's/^port \(.*\)/\1/p')"
+
+[Install]
+WantedBy=multi-user.target
