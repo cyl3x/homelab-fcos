@@ -29,17 +29,16 @@ WORKDIR /zfs
 RUN ./configure --with-linux=/usr/src/kernels/$(cat /kernel-version.txt)/ --with-linux-obj=/usr/src/kernels/$(cat /kernel-version.txt)/ \
     && make -j$(nproc) rpm-utils rpm-kmod
 
-RUN rm -f zfs-test*.rpm *debuginfo*.rpm *debugsource*.rpm *devel*.rpm zfs-dracut*.rpm *.src.rpm python*.rpm
-
-RUN mv *.x86_64.rpm /tmp/rpms
+RUN rm -f zfs-test*.rpm *debuginfo*.rpm *debugsource*.rpm *devel*.rpm zfs-dracut*.rpm *.src.rpm python*.rpm \
+    && mv *.x86_64.rpm /tmp/rpms
 ### zfs ###
 
 FROM quay.io/fedora/fedora-coreos:stable
 
-COPY --from=builder /tmp/rpms/*.rpm /rpms/
-COPY core-os/zfs/zfs-module.service /usr/lib/systemd/system/zfs-module.service
-
-RUN rpm-ostree install /rpms/*.rpm \
+COPY --from=builder /tmp/rpms/*.rpm /tmp/rpms/
+RUN rpm-ostree install /tmp/rpms/*.rpm \
     && rm -rf /var/lib/pcp
+
+COPY ./core-os/zfs/zfs-module.service /usr/lib/systemd/system/zfs-module.service
 
 RUN ostree container commit

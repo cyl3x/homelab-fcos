@@ -1,4 +1,4 @@
-FROM ghcr.io/cyl3x/fcos-base:latest
+FROM ghcr.io/cyl3x/fcos-zfs:latest
 
 RUN mkdir /tmp/rpms
 

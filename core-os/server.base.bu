@@ -50,9 +50,9 @@ systemd:
       enabled: true
       contents_local: server/systemd/rpm-ostree-install-basics.service
 
-    - name: rpm-ostree-rebase-to-fcos-base.service
+    - name: rpm-ostree-rebase-server.service
       enabled: true
-      contents_local: server/systemd/rpm-ostree-rebase-to-fcos-base.service
+      contents_local: server/systemd/rpm-ostree-rebase-server.service
 
     # Because https://github.com/coreos/fedora-coreos-tracker/issues/396#issuecomment-598799168
     - name: sshd-selinux-port.service
