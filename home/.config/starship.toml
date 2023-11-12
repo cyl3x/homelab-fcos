@@ -1,0 +1,54 @@
+format = """
+[╭─\\($username$hostname\\)─\\[$directory\\]$git_branch$git_status$cmd_duration](white)
+[╰─](white)$status[](bold red)[](bold green)[](bold yellow) 
+"""
+
+add_newline = false
+
+[directory]
+style = 'bold white'
+format = '[$path]($style)'
+truncation_length = 5
+truncation_symbol = ''
+
+[git_branch]
+style = 'bold red'
+format = '─\([$branch]($style)'
+
+[git_status]
+style = 'yellow'
+format = '( [$modified$ahead_behind$renamed$untracked$staged$conflicted$deleted]($style))\)'
+conflicted = '='
+ahead = '⇡'
+behind = '⇣'
+diverged = '⇕'
+up_to_date = ''
+untracked = '?'
+stashed = ''
+modified = '*'
+staged = '+'
+renamed = '»'
+deleted = '✕'
+
+[cmd_duration]
+min_time = 10_000
+style = 'bold yellow'
+format = '─\[[$duration]($style)\]'
+
+[status]
+style = 'red'
+format = '\([$int]($style)\)'
+disabled = false
+
+[username]
+show_always = true
+style_user = 'bold blue'
+style_root = 'bold red'
+format = '[$user]($style)'
+
+[hostname]
+trim_at = '.'
+ssh_only = true
+ssh_symbol = '🌐'
+style = 'bold blue'
+format = '[@$hostname $ssh_symbol]($style)'

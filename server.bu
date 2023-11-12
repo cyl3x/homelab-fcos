@@ -16,6 +16,22 @@ storage:
 
     - path: /etc/systemd/system/multi-user.target.wants/zrepl.service
       target: /usr/lib/systemd/system/zrepl.service
+
+  directories:
+    - path: /home/core/.bashrc.d
+      mode: 0700
+      user:
+        name: core
+      group:
+        name: core
+
+    - path: /home/core/.config
+      mode: 0700
+      user:
+        name: core
+      group:
+        name: core
+
   files:
     - path: /etc/hostname
       mode: 0644
@@ -26,6 +42,34 @@ storage:
       mode: 0644
       contents:
         inline: KEYMAP=de
+
+    # home
+    - path: /home/core/.bashrc.d/zy-shopt.sh
+      mode: 0744
+      contents:
+        local: home/.bashrc.d/zy-shopt.sh
+      user:
+        name: core
+      group:
+        name: core
+
+    - path: /home/core/.bashrc.d/zz-shell.sh
+      mode: 0744
+      contents:
+        local: home/.bashrc.d/zz-shell.sh
+      user:
+        name: core
+      group:
+        name: core
+
+    - path: /home/core/.config/starship.toml
+      mode: 0644
+      contents:
+        local: home/.config/starship.toml
+      user:
+        name: core
+      group:
+        name: core
 
     # zfs
     - path: /etc/zrepl/zrepl.yml
