@@ -54,6 +54,39 @@ storage:
         local: etc/ssh/sshd_config.d/zz-sshd.conf
       mode: 0600
 
+    - path: /etc/alert_discord
+      contents:
+        local: etc/alert_discord
+      mode: 0600
+
+    # bin
+    - path: /usr/local/bin/alert-login
+      contents:
+        local: bin/alert-login.sh
+      mode: 0744
+
+    - path: /usr/local/bin/alert-sshd
+      contents:
+        local: bin/alert-sshd.sh
+      mode: 0744
+
+    # pam
+    - path: /etc/pam.d/sshd
+      append:
+        - local: etc/pam.d/sshd
+
+    - path: /etc/pam.d/login
+      append:
+        - local: etc/pam.d/login
+
+    - path: /etc/pam.d/sudo
+      append:
+        - local: etc/pam.d/sudo
+
+    - path: /etc/pam.d/su
+      append:
+        - local: etc/pam.d/su
+
 systemd:
   units:
     - name: docker.service
