@@ -30,7 +30,7 @@ jobs:
         with:
           containerfiles: Dockerfile
           image: ${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
-          layers: true
+          layers: false
           oci: true
           build-args: BUILDER_VERSION=${{ env.FCOS_VERSION }}
 
