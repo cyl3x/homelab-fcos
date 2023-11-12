@@ -1,0 +1,35 @@
+storage:
+  links:
+    - path: /etc/systemd/system/multi-user.target.wants/zfs-scrub-monthly@raid.service
+      target: /etc/systemd/system/zfs-scrub-monthly@.service
+
+    - path: /etc/systemd/system/multi-user.target.wants/zfs-scrub-monthly@raid.timer
+      target: /etc/systemd/system/zfs-scrub-monthly@.timer
+
+    - path: /etc/systemd/system/multi-user.target.wants/zrepl.service
+      target: /usr/lib/systemd/system/zrepl.service
+
+  files:
+    - path: /etc/zrepl/zrepl.yml
+      contents:
+        local: zfs/zrepl.yml
+      mode: 0644
+
+    - path: /etc/default/zfs
+      contents:
+        local: zfs/default/zfs
+      mode: 0644
+
+systemd:
+  units:
+    - name: zfs-scrub@raid.service
+      enabled: true
+
+    - name: zfs-scrub@raid.timer
+      enabled: true
+
+    - name: zfs-mount.service
+      enabled: true
+
+    - name: zrepl.service
+      enabled: true

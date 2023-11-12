@@ -9,7 +9,7 @@ ConditionPathExists=!/var/lib/%N.stamp
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=rpm-ostree install --apply-live --allow-inactive micro docker-compose btop policycoreutils-python-utils
+ExecStart=rpm-ostree install --allow-inactive micro docker-compose btop policycoreutils-python-utils
 ExecStartPost=touch /var/lib/%N.stamp
 
 [Install]

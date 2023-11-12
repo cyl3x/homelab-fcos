@@ -1,5 +1,0 @@
-# Discord Webhook url
-WEBHOOK=""
-
-# space seperated list of whitelisted ips (ssh login)
-IP_WHITELIST=""

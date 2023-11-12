@@ -1,0 +1,44 @@
+storage:
+  files:
+    - path: /etc/alert_discord
+      mode: 0600
+      contents:
+        inline: |
+          # Discord Webhook url
+          WEBHOOK=""
+
+          # space seperated list of whitelisted ips (ssh login)
+          IP_WHITELIST=""
+
+    # bin
+    - path: /usr/local/bin/alert-login
+      mode: 0744
+      contents:
+        local: notify/bin/alert-login.sh
+
+    - path: /usr/local/bin/alert-sshd
+      mode: 0744
+      contents:
+        local: notify/bin/alert-sshd.sh
+
+    # pam
+    - path: /etc/pam.d/sshd
+      append:
+        - inline: |
+            session optional pam_exec.so seteuid /usr/local/bin/alert-sshd
+
+    - path: /etc/pam.d/login
+      append:
+        - inline: |
+            session optional pam_exec.so seteuid /usr/local/bin/alert-login
+
+    - path: /etc/pam.d/sudo
+      append:
+        - inline: |
+            session optional pam_exec.so seteuid /usr/local/bin/alert-login
+
+    - path: /etc/pam.d/su
+      append:
+        - inline: |
+            session optional pam_exec.so seteuid /usr/local/bin/alert-login
+            auth optional pam_exec.so seteuid /usr/local/bin/alert-login

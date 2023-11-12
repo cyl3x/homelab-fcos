@@ -1,1 +1,0 @@
-session optional pam_exec.so seteuid /usr/local/bin/alert-login
