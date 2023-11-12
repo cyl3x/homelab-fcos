@@ -33,6 +33,11 @@ storage:
         local: etc/zrepl/zrepl.yml
       mode: 0644
 
+    - path: /etc/default/zfs
+      contents:
+        local: etc/default/zfs
+      mode: 0644
+
     # config
     - path: /etc/zincati/config.d/zz-config.toml
       contents:
