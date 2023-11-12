@@ -27,6 +27,12 @@ storage:
       contents:
         inline: KEYMAP=de
 
+    # config
+    - path: /etc/zincati/config.d/zz-config.toml
+      contents:
+        local: etc/zincati/config.d/zz-config.toml
+      mode: 0644
+
     - path: /etc/profile.d/zz-environment.sh
       contents:
         local: etc/profile.d/zz-environment.sh
