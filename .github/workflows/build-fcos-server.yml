@@ -4,18 +4,16 @@ env:
   IMAGE_NAME: fcos-server
 
 on:
-  schedule:
-    - cron:  '0 12,0 * * *'
+  workflow_run:
+    workflows: ['Build container: fcos-zfs']
+    types:
+      - completed
   push:
     branches:
       - main
     paths:
       - Dockerfile.server
       - .github/workflows/build-fcos-base.yml
-  workflow_run:
-    workflows: ['Build container: fcos-zfs']
-    types:
-      - completed
 
 jobs:
   build-image:
@@ -45,7 +43,7 @@ jobs:
         if: failure()
         uses: tsickert/discord-webhook@v5.3.0
         with:
-          webhook-urL: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           content: '@everyone FCOS **Server** build has **failed**'
           embed-title: 'Finished workflow with errors'
           embed-url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -56,7 +54,7 @@ jobs:
         if: success()
         uses: tsickert/discord-webhook@v5.3.0
         with:
-          webhook-urL: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           content: '@everyone FCOS **Server** build was **successfull**'
           embed-title: 'Finished workflow without errors'
           embed-url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
