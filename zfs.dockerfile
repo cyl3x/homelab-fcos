@@ -1,14 +1,14 @@
-ARG BUILDER_VERSION=38
+ARG FEDORA_VERSION=38
 
 FROM quay.io/fedora/fedora-coreos:stable as kernel-query
 RUN rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' > /kernel-version.txt
 
-FROM registry.fedoraproject.org/fedora:${BUILDER_VERSION} as builder
+FROM registry.fedoraproject.org/fedora:${FEDORA_VERSION} as builder
 ### setup builder
-ARG BUILDER_VERSION
+ARG FEDORA_VERSION
 COPY --from=kernel-query /kernel-version.txt /kernel-version.txt
 WORKDIR /etc/yum.repos.d
-RUN curl -L -O https://src.fedoraproject.org/rpms/fedora-repos/raw/f${BUILDER_VERSION}/f/fedora-updates-archive.repo && \
+RUN curl -L -O https://src.fedoraproject.org/rpms/fedora-repos/raw/f${FEDORA_VERSION}/f/fedora-updates-archive.repo && \
     sed -i 's/enabled=AUTO_VALUE/enabled=true/' fedora-updates-archive.repo
 RUN dnf install -y jq dkms gcc make autoconf automake libtool rpm-build libtirpc-devel libblkid-devel \
     libuuid-devel libudev-devel openssl-devel zlib-devel libaio-devel libattr-devel elfutils-libelf-devel \

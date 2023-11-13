@@ -20,10 +20,10 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: FCOS Version
+      - name: Fetch newest Fedora version
         shell: bash
         run: |
-          echo "FCOS_VERSION=$(curl -Ls https://builds.coreos.fedoraproject.org/streams/stable.json | jq -r '.architectures.x86_64.artifacts.metal.release' | sed -n 's~\([[:digit:]]\+\)\..*~\1~p')" >> $GITHUB_ENV
+          echo "FEDORA_VERSION=$(curl -Ls https://builds.coreos.fedoraproject.org/streams/stable.json | jq -r '.architectures.x86_64.artifacts.metal.release' | sed -n 's~\([[:digit:]]\+\)\..*~\1~p')" >> $GITHUB_ENV
 
       - name: Build container image
         uses: redhat-actions/buildah-build@v2
@@ -32,7 +32,7 @@ jobs:
           image: ${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           layers: false
           oci: true
-          build-args: BUILDER_VERSION=${{ env.FCOS_VERSION }}
+          build-args: FEDORA_VERSION=${{ env.FEDORA_VERSION }}
 
       - name: Push To Registry
         uses: redhat-actions/push-to-registry@v2
@@ -43,7 +43,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build failed webhook
+      - name: Notify failed build
         if: failure()
         uses: tsickert/discord-webhook@v5.3.0
         with:
@@ -54,7 +54,7 @@ jobs:
           embed-timestamp: ${{ github.event.repository.updated_at }}
           embed-color: 16734296
 
-      - name: Build success webhook
+      - name: Notify successfull build
         if: success()
         uses: tsickert/discord-webhook@v5.3.0
         with:
