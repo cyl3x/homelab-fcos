@@ -1,7 +1,7 @@
 [Unit]
 Description=Rebase system to custom image on boot
-Wants=rpm-ostree-install.service network-online.target
-After=rpm-ostree-install.service network-online.target
+Wants=server-rpm-ostree-install.service network-online.target
+After=server-rpm-ostree-install.service network-online.target
 Before=zincati.service
 
 [Service]

@@ -16,7 +16,7 @@ storage:
 
   files:
     - path: /home/core/.bashrc.d/zy-shopt.sh
-      mode: 0744
+      mode: 0700
       contents:
         local: home/bashrc.d/zy-shopt.sh
       user:
@@ -25,7 +25,7 @@ storage:
         name: core
 
     - path: /home/core/.bashrc.d/zz-shell.sh
-      mode: 0744
+      mode: 0700
       contents:
         local: home/bashrc.d/zz-shell.sh
       user:
@@ -34,7 +34,7 @@ storage:
         name: core
 
     - path: /home/core/.config/starship.toml
-      mode: 0644
+      mode: 0600
       contents:
         local: home/config/starship.toml
       user:

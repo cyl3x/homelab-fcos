@@ -3,7 +3,7 @@ Description=Layer base packages with rpm-ostree
 Documentation=https://docs.fedoraproject.org/en-US/fedora-coreos/os-extensions/
 Wants=network-online.target
 After=network-online.target
-Before=rpm-ostree-rebase-to-fcos-base.service sshd-selinux-port.service
+Before=server-rpm-ostree-rebase.service sshd-selinux-port.service
 ConditionPathExists=!/var/lib/%N.stamp
 
 [Service]
