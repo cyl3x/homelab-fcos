@@ -34,6 +34,7 @@ jobs:
           image: ${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           layers: false
           oci: true
+          tags: latest ${{ env.FEDORA_VERSION_FULL }}
           build-args: FEDORA_VERSION=${{ env.FEDORA_VERSION }}
 
       - name: Push To Registry
