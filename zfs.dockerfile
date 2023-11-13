@@ -39,6 +39,4 @@ COPY --from=builder /tmp/rpms/*.rpm /tmp/rpms/
 RUN rpm-ostree install /tmp/rpms/*.rpm \
     && rm -rf /var/lib/pcp
 
-COPY ./core-os/zfs/zfs-module.service /usr/lib/systemd/system/zfs-module.service
-
 RUN ostree container commit

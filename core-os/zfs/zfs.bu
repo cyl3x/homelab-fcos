@@ -36,3 +36,4 @@ systemd:
 
     - name: zfs-module.service
       enabled: true
+      contents_local: zfs/zfs-module.service

@@ -1,13 +1,13 @@
 [Unit]
 Description=Loads zfs kernel modules
-Requires=systemd-modules-load.target
+Requires=systemd-modules-load.service
 Before=zfs-import.target
 
 [Service]
 Type=oneshot
 RemainAfterExit=true
 ExecStartPre=bash -c "insmod /lib/modules/$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')/extra/zfs/spl.ko"
-ExecStart=bash -c "insmod /lib/modules/$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')/extra/zfs/zfs.ko"
+ExecStart=bash -c "insmod /lib/modules/$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')/extra/zfs/zfs.ko $(sed -n 's/^options zfs \(.*\)/\1/p' /etc/modprobe.d/* | tr '\n' ' ')"
 
 [Install]
 WantedBy=zfs.target

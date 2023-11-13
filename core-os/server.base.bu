@@ -44,6 +44,12 @@ storage:
         inline: |
           EDITOR=micro
 
+    - path: /etc/modprobe.d/zfs.conf
+      mode: 0644
+      contents:
+        inline: |
+          options zfs zfs_arc_max=34359738368
+
 systemd:
   units:
     - name: server-rpm-ostree-install.service
