@@ -1,0 +1,66 @@
+name: 'Build container: fcos-toolbox'
+
+env:
+  IMAGE_NAME: fcos-toolbox
+
+on:
+  schedule:
+    - cron:  '0 0,12 * * *'
+  push:
+    branches:
+      - main
+    paths:
+      - toolbox.dockerfile
+      - .github/workflows/build-fcos-toolbox.yml
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Fetch newest Fedora version
+        shell: bash
+        run: |
+          echo "FEDORA_VERSION=$(curl -Ls https://builds.coreos.fedoraproject.org/streams/stable.json | jq -r '.architectures.x86_64.artifacts.metal.release' | sed -n 's~\([[:digit:]]\+\)\..*~\1~p')" >> $GITHUB_ENV
+
+      - name: Build container image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          containerfiles: toolbox.dockerfile
+          image: ${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          layers: false
+          oci: true
+          build-args: FEDORA_VERSION=${{ env.FEDORA_VERSION }}
+
+      - name: Push To Registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          registry: ghcr.io
+          tags: latest
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify failed build
+        if: failure()
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          content: '@everyone FCOS **ZFS** build has **failed**'
+          embed-title: 'Finished workflow with errors'
+          embed-url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          embed-timestamp: ${{ github.event.repository.updated_at }}
+          embed-color: 16734296
+
+      - name: Notify successfull build
+        if: success()
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          content: '@everyone FCOS **ZFS** build was **successfull**'
+          embed-title: 'Finished workflow without errors'
+          embed-url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          embed-timestamp: ${{ github.event.repository.updated_at }}
+          embed-color: 5832553
