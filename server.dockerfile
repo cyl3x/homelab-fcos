@@ -15,6 +15,12 @@ RUN curl -s -L -o /tmp/starship.tar.gz "$(cat /tmp/starship_url.txt)" \
     && tar xzf /tmp/starship.tar.gz --directory=/usr/bin
 ### starship ###
 
+### yq ###
+RUN curl -s -L -H 'X-GitHub-Api-Version: 2022-11-28' https://api.github.com/repos/mikefarah/yq/releases | jq -r '.[0].assets[].browser_download_url | select(endswith("linux_amd64"))' > /tmp/yq_url.txt
+RUN echo "YQ URL: $(cat /tmp/yq_url.txt)"
+RUN curl -s -L -o /usr/bin/yq "$(cat /tmp/yq_url.txt)"
+### yq ###
+
 RUN ls /tmp/rpms/*.rpm
 RUN rpm-ostree install /tmp/rpms/*.rpm \
     && ostree container commit
