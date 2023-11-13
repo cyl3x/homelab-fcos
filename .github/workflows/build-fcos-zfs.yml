@@ -10,7 +10,7 @@ on:
     branches:
       - main
     paths:
-      - Dockerfile.zfs
+      - zfs.dockerfile
       - .github/workflows/build-fcos-zfs.yml
 
 jobs:
@@ -28,7 +28,7 @@ jobs:
       - name: Build container image
         uses: redhat-actions/buildah-build@v2
         with:
-          containerfiles: Dockerfile.zfs
+          containerfiles: zfs.dockerfile
           image: ${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           layers: false
           oci: true
@@ -47,7 +47,7 @@ jobs:
         if: failure()
         uses: tsickert/discord-webhook@v5.3.0
         with:
-          webhook-urL: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           content: '@everyone FCOS **ZFS** build has **failed**'
           embed-title: 'Finished workflow with errors'
           embed-url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -58,7 +58,7 @@ jobs:
         if: success()
         uses: tsickert/discord-webhook@v5.3.0
         with:
-          webhook-urL: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           content: '@everyone FCOS **ZFS** build was **successfull**'
           embed-title: 'Finished workflow without errors'
           embed-url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

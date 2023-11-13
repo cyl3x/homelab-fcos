@@ -12,7 +12,7 @@ on:
     branches:
       - main
     paths:
-      - Dockerfile.server
+      - server.dockerfile
       - .github/workflows/build-fcos-base.yml
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
       - name: Build container image
         uses: redhat-actions/buildah-build@v2
         with:
-          containerfiles: Dockerfile.server
+          containerfiles: server.dockerfile
           image: ${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           layers: false
           oci: true
